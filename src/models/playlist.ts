@@ -1,5 +1,5 @@
 import {Song} from "./song";
-import {genreInfo} from "./genre";
+import {genreInfo} from "./song";
 /**
  * Clase encargada de definir el funcionamiento de una lista de reproduccion de musica de una plataforma digital.
  */
@@ -11,12 +11,11 @@ export class Playlist {
    * @param duration duracion total de la playlist en horas y minutos.
    * @param genres genres musicales que se incluyen dentro de la playlist.
    */
-  constructor(private name: string, private songs: Song[], private duration: number, private genres: genreInfo[], private creationYear: number) {
+  constructor(private name: string, private songs: Song[], private duration: number, private genres: genreInfo[]) {
     this.songs = songs;
     this.duration = duration;
     this.genres = genres;
     this.name = name;
-    this.creationYear = creationYear;
   }
 
   /**
@@ -79,13 +78,6 @@ export class Playlist {
     return this.duration;
   }
 
-  /**
-  * metodo que obtiene el año de creacion de la playlist
-  * @returns devuelve el año de creacion de la playlist
-  */
-  getCreateYear(): number {
-    return this.creationYear;
-  }
   /**
   * Metodo que devuelve los genres de las songs de la playlist.
   * @returns devuelve los genres de la playlist

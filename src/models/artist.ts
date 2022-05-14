@@ -1,27 +1,21 @@
-import { Album } from "./album";
-import { Song } from "./song";
-import { genreInfo } from "./genre";
-import {Group} from "./group";
+import {Song} from "./song";
+import {genreInfo} from "./song";
 /**
  * Clase encargada de especificar a los diferentes musicos u artistas que forman parte de grupos o tienen carreras en solitario.
  */
 export class Artist {
-  private groupList: Group[] = [];
   private songsList: Song[] = [];
-  private albumList: Album[] = [];
   private listenerMensual: number = 0;
   /**
    * Constructor de la entidad Artistas del sistema.
    * @param name nombre del artista.
    * @param genre generos en los que suele trabajar el artista
-   * @param albumes albumes que ha publicado un artista
-   * @param listenerIndi cantidad de oyentes mensuales que tiene un artista en especifico.
    * @param listenerMensual Cantidad de oyentes mensuales de un grupo, en caso de ser una carrera solitaria es igual a los oyentes individuales.
+   * @param songList lista de las canciones del artista
    */
-  constructor(private name: string, private genres: genreInfo[], private listenerIndi: number) {
+  constructor(private name: string, private genres: genreInfo[]) {
     this.name = name;
     this.genres = genres;
-    this.listenerIndi = listenerIndi;
   }
 
   /**
@@ -41,27 +35,11 @@ export class Artist {
   }
 
   /**
-   * metodo encargada de mostrar los grupos a los que pertenece el artista.
-   * @returns devuelve lso grupos en los que se encuentra el artista.
-   */
-  getGroupList(): Group[] {
-    return this.groupList;
-  }
-
-  /**
    * metodo que devuelve los generos musicales relacionados
    * @returns devuelve el genero musical relacionado a ese artista.
    */
   getGenre(): genreInfo[] {
     return this.genres;
-  }
-
-  /**
-   * metodo que devuelve los albumes lanzados por el artista
-   * @returns el album lanzado por el artista
-   */
-  getAlbumList(): Album[] {
-    return this.albumList;
   }
 
   /**
@@ -86,28 +64,12 @@ export class Artist {
    */
   public calOyentes(): number {
     let result: number = 0;
-    if (this.groupList.length > 0) {
-      this.groupList.forEach((group) => {
-        result += group.getOyentes();
+    if (this.songsList.length > 0) {
+      this.songsList.forEach((song) => {
+        result += song.getListener();
       });
     }
-    return result + this.listenerIndi;
-  }
-  /**
-   * Metodo encargado de añadir un nuevo elemento al atributo privados grupos
-   * @param newGrupo Nuevo item a añadir al grupo
-   * @return añade un nuevo grupo.
-   */
-  public setGroups(newGroupList: Group[]): void {
-    this.groupList = newGroupList;
-  }
-
-  /**
-   * Metodo encargado de añadir un nuevo grupo a los grupos a los que pertenece el artista
-   * @param newGrupo nuevo grupo que se añade
-   */
-  public addGroup(newGrupo: Group): void {
-    this.groupList.push(newGrupo);
+    return result;
   }
 
   /**
@@ -117,6 +79,7 @@ export class Artist {
    */
   public setSongList(newList: Song[]): void {
     this.songsList = newList;
+    this.listenerMensual = this.calOyentes();
   }
 
   /**
@@ -127,20 +90,8 @@ export class Artist {
     this.songsList.push(newSong);
   }
 
-  /**
-   * Metodo encargado de añadir un nuevo elemento a la lista de albumes
-   * @param newGrupo Nuevo item a añadir al album
-   * @return añade un nuevo album a la lista de albumes.
-   */
-  public setAlbum(newAlbum: Album): void {
-    this.albumList.push(newAlbum);
-  }
 
-  /**
-   * metodo que actualiza los oyentes que tiene un artista
-   * @param listeners numero de oyentes individuales que tiene el artista
-   */
-  public setListeners(listeners: number): void {
-    this.listenerMensual = listeners;
+  public getListeners(): number {
+    return this.listenerMensual;
   }
 }
