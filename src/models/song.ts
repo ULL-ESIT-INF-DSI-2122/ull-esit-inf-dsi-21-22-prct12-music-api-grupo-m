@@ -19,8 +19,8 @@ export class Song {
   * @param listener oyentes mensuales de la cancion
   */
 
-  constructor(private name: string, private autor: Artist, private duration: number, private genres: genreInfo[], private single: boolean, private reproductions: number, private listener: number) {
-    this.autor = autor;
+  constructor(private name: string, private author: Artist[], private duration: number, private genres: genreInfo[], private single: boolean, private reproductions: number, private listener: number) {
+    this.author = author;
     this.duration = this.isFormat(duration);
     this.genres = genres;
     this.name = name;
@@ -57,8 +57,8 @@ export class Song {
   * Metodo que obtiene el autor de la cancion ya sea un artista
   * @returns devuelve un array de artistas o de grupos que ha realizado la cancion
   */
-  getAutor(): Artist {
-    return this.autor;
+  getAutor(): Artist[] {
+    return this.author;
   }
 
   /**
@@ -93,3 +93,4 @@ export class Song {
     return this.single;
   }
 }
+
