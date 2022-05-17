@@ -3,7 +3,7 @@ import {artistModel} from '../schema/artistSchema';
 
 export const artistRouter = express.Router();
 
-// Para buscarun artista desde la base de datos
+// Para buscar un artista desde la base de datos
 
 artistRouter.get('/artist', async (req, res) => {
   const filter = req.query.name?{name: req.query.name.toString()}:{};
