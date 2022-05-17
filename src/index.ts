@@ -15,6 +15,6 @@ app.use(artistRouter);
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
-  console.log(`Servidor desplegado en ${port}`);
+  console.log(`Servidor desplegado en el puerto ${port}`);
 });
 

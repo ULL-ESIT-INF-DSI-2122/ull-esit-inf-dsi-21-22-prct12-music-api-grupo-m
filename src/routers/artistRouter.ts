@@ -105,3 +105,37 @@ artistRouter.patch('/artist/:id', async (req, res) => {
     return res.status(400).send(error);
   }
 });
+
+// Eliminar artistas
+artistRouter.delete('/artist', async (req, res) => {
+  console.log(`Se va a eliminar el artista: ${req.query.name}`);
+  if (!req.query.name) {
+    return res.status(400).send({
+      error: 'Se debe introducir el nombre de un artista',
+    });
+  }
+
+  try {
+    const artistDeleted = await artistModel.findOneAndDelete({name: req.query.name.toString()});
+    if (!artistDeleted) {
+      return res.status(404).send();
+    }
+    return res.send(artistDeleted);
+  } catch (error) {
+    return res.status(400).send();
+  }
+});
+
+artistRouter.delete('/artist/:id', async (req, res) => {
+  try {
+    const artistDeleted = await artistModel.findByIdAndDelete(req.params.id);
+
+    if (!artistDeleted) {
+      return res.status(404).send();
+    }
+
+    return res.send(artistDeleted);
+  } catch (error) {
+    return res.status(400).send();
+  }
+});
