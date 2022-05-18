@@ -4,13 +4,13 @@ import './database/mongoose';
 
 import {artistRouter} from './routers/artistRouter';
 import {songRouter} from './routers/songRouter';
-// import {playlistRouter} from './router/playlistRouter';
+import {playlistRouter} from './routers/playlistRouter';
 
 const app = express();
 app.use(express.json());
 app.use(artistRouter);
 app.use(songRouter);
-// app.use(playlistRouter);
+app.use(playlistRouter);
 
 const port = process.env.PORT || 3000;
 

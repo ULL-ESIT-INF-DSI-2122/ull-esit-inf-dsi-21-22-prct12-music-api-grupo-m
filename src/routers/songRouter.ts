@@ -3,6 +3,8 @@ import {songModel} from '../schema/songSchema';
 
 export const songRouter = express.Router();
 
+// Consultar Canciones
+
 songRouter.get('/song', async (req, res) => {
   const filter = req.query.name?{name: req.query.name.toString()}:{};
   try {
@@ -29,7 +31,7 @@ songRouter.get('/song/:id', async (req, res) => {
   }
 });
 
-
+// Añadir Canciones
 // No se que hacer con el calulo de los oyentes
 songRouter.post('/song', async (req, res) => {
   console.log(req.body.author);
@@ -45,7 +47,70 @@ songRouter.post('/song', async (req, res) => {
   }
 });
 
-// Eliminar artistas
+// Modificar Canciones
+
+songRouter.patch('/song', async (req, res) => {
+  console.log(`Cancion que se quiere modificar: ${req.body.name}`);
+  if (!req.body.name) {
+    return res.status(400).send({
+      error: 'El nombre de una cancion debe de ser especificado',
+    });
+  }
+  const allowedUpdates = ['name', 'genres'];
+  const actualUpdates = Object.keys(req.body);
+  const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
+
+  if (!isValidUpdate) {
+    return res.status(400).send({
+      error: 'No se puede modificar',
+    });
+  }
+
+  try {
+    const songModify = await songModel.findOneAndUpdate({name: req.body.name.toString()}, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!songModify) {
+      return res.status(404).send();
+    }
+
+    return res.send(songModify);
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+});
+
+
+songRouter.patch('/song/:id', async (req, res) => {
+  const allowedUpdates = ['name', 'duration', 'genres', 'single', 'reproductions', 'listener'];
+  const actualUpdates = Object.keys(req.body);
+  const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
+
+  if (!isValidUpdate) {
+    return res.status(400).send({
+      error: 'No se puede modificar',
+    });
+  }
+
+  try {
+    const songModify = await songModel.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!songModify) {
+      return res.status(404).send();
+    }
+    return res.send(songModify);
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+});
+
+
+// Eliminar Canciones
 songRouter.delete('/song', async (req, res) => {
   console.log(`Se va a eliminar la canción: ${req.query.name}`);
   if (!req.query.name) {
