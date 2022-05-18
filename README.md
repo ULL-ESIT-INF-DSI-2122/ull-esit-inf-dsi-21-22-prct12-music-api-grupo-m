@@ -7,11 +7,9 @@
 
 ## Introducción:
 
-Aqui va comentada la introduccion
+Se pretente implementar una API REST sobre un sistema que permite almacenar y manejar diversas colecciones de canciones, artistas y playlist. Para ello, se utilizarán para las operaciones CRUD(Create, Read, Update y Delete) que proporciona Node/Express y almacenar toda esta información en una base de datos implementada a través de MongoDB y Mongoose.
 
-Para ejecutar el código, tras ejecutar el comando tsc en la terminal, Se debe abrir dos terminales diferentes:
-
-Instrucciones de compilación
+Para la ejecución del código se recomienda la utilización de la herramienta de ThunderClient que permite mandar diversas peticiones a nuestra base de datos desplegada con Heroku y MongoDB Atlas. Aunque para mayor comodidad se exportará un fichero con una serie de operaciones básicas la cual se puede importar dentro de ThunderClient para su comprobación.
 
 
 > Para acceder al informe de la práctica 12 piche [aquí]()
