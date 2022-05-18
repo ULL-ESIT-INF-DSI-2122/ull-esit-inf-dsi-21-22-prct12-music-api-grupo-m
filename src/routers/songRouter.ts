@@ -56,7 +56,7 @@ songRouter.patch('/song', async (req, res) => {
       error: 'El nombre de una cancion debe de ser especificado',
     });
   }
-  const allowedUpdates = ['name', 'genres'];
+  const allowedUpdates = ['name', 'author', 'duration', 'genres', 'single', 'reproduction', 'listener'];
   const actualUpdates = Object.keys(req.body);
   const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
 
@@ -84,7 +84,7 @@ songRouter.patch('/song', async (req, res) => {
 
 
 songRouter.patch('/song/:id', async (req, res) => {
-  const allowedUpdates = ['name', 'duration', 'genres', 'single', 'reproductions', 'listener'];
+  const allowedUpdates = ['name', 'author', 'duration', 'genres', 'single', 'reproduction', 'listener'];
   const actualUpdates = Object.keys(req.body);
   const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
 
