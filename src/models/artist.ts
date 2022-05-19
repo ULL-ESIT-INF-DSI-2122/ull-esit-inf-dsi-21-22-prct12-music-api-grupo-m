@@ -5,8 +5,6 @@ import {genreInfo} from "./song";
  * Clase encargada de especificar a los diferentes musicos u artistas que forman parte de grupos o tienen carreras en solitario.
  */
 export class Artist {
-  private songsList: Song[] = [];
-  private listenerMensual: number = 0;
   /**
    * Constructor de la entidad Artistas del sistema.
    * @param name nombre del artista.
@@ -14,11 +12,13 @@ export class Artist {
    * @param listenerMensual Cantidad de oyentes mensuales de un grupo, en caso de ser una carrera solitaria es igual a los oyentes individuales.
    * @param songList lista de las canciones del artista
    */
-  constructor(private name: string, private genres: genreInfo[]) {
+  constructor(private name: string, private genres: genreInfo[], private songList: Song[], private listenerMensual: number) {
     this.name = name;
     this.genres = genres;
+    this.songList = songList;
+    this.listenerMensual = listenerMensual;
   }
-
+  
   /**
    * metodo encargado de devolver el nombre del artista
    * @returns devuelve el nombre del artista
@@ -48,7 +48,7 @@ export class Artist {
    * @returns devuelve las canciones que ha lanzado el artista.
    */
   getSongList(): Song[] {
-    return this.songsList;
+    return this.songList;
   }
 
   /**
@@ -65,8 +65,8 @@ export class Artist {
    */
   public calOyentes(): number {
     let result: number = 0;
-    if (this.songsList.length > 0) {
-      this.songsList.forEach((song) => {
+    if (this.songList.length > 0) {
+      this.songList.forEach((song) => {
         result += song.getListener();
       });
     }
@@ -78,18 +78,18 @@ export class Artist {
    * @param newGrupo Nuevo item a añadir a la lista de canciones
    * @return añade una nueva cancion.
    */
-  public setSongList(newList: Song[]): void {
-    this.songsList = newList;
-    this.listenerMensual = this.calOyentes();
-  }
+  /*public setSongList(newList: Song[]): void {
+    this.songList = newList;
+    
+  }*/
 
   /**
    * metodo que añade una nueva cancion que ha sacado el artista
    * @param newSong nueva cancion que publico el artista
    */
-  public setSong(newSong: Song): void {
+  /*public setSong(newSong: Song): void {
     this.songsList.push(newSong);
-  }
+  }*/
 
 
   public getListeners(): number {

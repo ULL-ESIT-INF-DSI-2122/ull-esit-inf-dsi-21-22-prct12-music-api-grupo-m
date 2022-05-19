@@ -35,6 +35,13 @@ playlistRouter.get('/playlist/:id', async (req, res) => {
 // Para crear Playlists
 
 playlistRouter.post('/playlist', async (req, res) => {
+  const canciones = req.body.songs;
+  let sumaDuration: number = 0;
+  for (var i in canciones) {
+    sumaDuration += canciones[i].duration;
+  }
+  req.body.duration = sumaDuration;
+
   const playlist = new playlistModel(req.body);
   try {
     await playlist.save();

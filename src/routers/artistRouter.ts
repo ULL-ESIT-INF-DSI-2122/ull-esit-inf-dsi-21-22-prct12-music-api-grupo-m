@@ -34,6 +34,12 @@ artistRouter.get('/artist/:id', async (req, res) => {
 // Para crear y añadir un artista a la base de datos
 
 artistRouter.post('/artist', async (req, res) => {
+  const canciones = req.body.songList;
+  let sumaOyentes: number = 0;
+  for (var i in canciones) {
+    sumaOyentes += canciones[i].listener;
+  }
+  req.body.listenerMensual = sumaOyentes;
   const artista = new artistModel(req.body);
   try {
     await artista.save();
@@ -52,7 +58,7 @@ artistRouter.patch('/artist', async (req, res) => {
       error: 'Un artista debe de ser especificado',
     });
   }
-  const allowedUpdates = ['name', 'genres'];
+  const allowedUpdates = ['name', 'genres', 'songList'];
   const actualUpdates = Object.keys(req.body);
   const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
 
@@ -80,7 +86,7 @@ artistRouter.patch('/artist', async (req, res) => {
 
 
 artistRouter.patch('/artist/:id', async (req, res) => {
-  const allowedUpdates = ['name', 'genres'];
+  const allowedUpdates = ['name', 'genres', 'songList'];
   const actualUpdates = Object.keys(req.body);
   const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
 

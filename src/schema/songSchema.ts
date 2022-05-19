@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import {artistSchema} from '../schema/artistSchema';
+// import {artistSchema} from '../schema/artistSchema';
 import {Song} from '../models/song';
 
 
@@ -9,13 +9,14 @@ export const songSchema = new mongoose.Schema({
     required: true,
     trim: true,
     validate: (value: string) => {
-      if (!value.match(/^[A-ZñÑ][a-zA-ZñÑ ]*$/)) {
+      if (!value.match(/^[A-Za-z0-9]*$/)) {
         throw new Error('El nombre de la cancion tiene que empezar con una mayúscula y solo pueden estar formados por letras.');
       }
     },
   },
   author: {
-    type: [artistSchema],
+    type: [String],
+    unique: true,
     required: true,
     trim: true,
   },
