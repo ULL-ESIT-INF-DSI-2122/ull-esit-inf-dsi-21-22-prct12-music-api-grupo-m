@@ -32,16 +32,12 @@
 
   2.7. [Router por Defecto.](#id27)
 
-  2.8. [Router Artista.](#id28)
+  2.8. [Routers de Artistas, Canciones y Playlists.](#id28)
 
-  2.9. [Router Canción.](#id29)
+  2.9. [Fichero Mongoose.ts](#id29)
 
-  2.10. [Router Playlist.](#id210)
+  2.10. [Fichero index.ts.](#id210)
     
-  2.11. [Fichero Mongoose.ts](#id211)
-
-  2.12. [Fichero index.ts.](#id212)
-
 3. [Instrucciones de Uso.](#id3)
 
 4. [Dificultades.](#id4)
@@ -597,6 +593,230 @@ Las pruebas unitarias tampoco se han podido realizar para este modelo por el mot
 
 ### 2.7. Router por Defecto. <a name="id27"></a>
 
+En la ruta src/routers especificamos las funciones CRUD (get, post, patch, delete) encargadas de leer, añadir, modificar y eliminar para cada uno de los objetos contemplados en la aplicación: canciones, artista y menPLaylists. Para ello, tenemos separados en 3 ficheros diferentes (una para cada tipo) esas funciones y sus diferentes puntos de acceso a estas aplicaciones (/song, / artist, /playlist).
+
+
+En el caso del router por defecto `defaultRouter` define un unico router y la ruta generica `*`. El propósito de esto es el de crear un receptor por defecto para todas esas peticiones erróneas, ya sea porque se realizan a una ruta no soportada o usando un tipo de mensaje incorrecto y serán respondidas con un status 501.
+
+
+```TypeScript
+import * as express from 'express';
+
+export const defaultRouter = express.Router();
+
+defaultRouter.all('*', (_, res) => {
+  res.status(501).send();
+});
+
+```
+
+### 2.8. Routers de Artistas, Canciones y Playlists. <a name="id28"></a>
+
+Pese a que las estructuras de datos que se almacenan en la base de datos son diferentes se tratan de la misma manera e incluso las funciones que encontramos dentro de los routers son bastante similares. En nuestro caso hemos decicido organizar los puntos de acceso y los ficheros en función de las estructuras de datos contempladas, otra posible solución es la que se propuso en las sesiones teoricas de la asignatura, esta sería crear los ficheros y las funciones en base a las operaciones que se quieran tratar sobre la estructura. Por ejemplo, crear un fichero `post.ts` que defina para los diversos datos las funciones de creación. 
+
+Sin embargo, como hemos dicho nosotros lo organizamos en base a la estructura que queremos almacenar, es decir, creamos tres ficheros, uno por cada clase (cancion, artista y playlist) y dentro definimos las operaciones CRUD (crear, leer, modificar y eliminar) para cada clase correspondiente.
+
+Por ejemplo para el router de un artista, primero debemos crealo a través de `express.Router()`. Al utilizar esta función esta variable pasa a ser un objeto que tiene varias opciones respecto al tipo de peticiones que puede recibir. Por lo que a continuación debemos especificar que sucede cuando el objeto recibe alguna de estas peticiones:
+
+* En el caso de la petición `get`: Se activa este receptor al recibir una peticion get sobre la ruta `/artist`. Y se guarda en la variable *filter* el nombre del artista que lo recibe a través del manejador **req** y extrae el valor que se le ha pasado en el link y lo transforma a un string.
+
+Posteriormente dentro de un bloque tipo `try-catch`para controlar los posibles errores que sucedan en la función, se realiza una busqueda de manera asíncrona. Esta búsqueda se basa en realizar una búsqueda del nombre que hay guardado en `filter` dentro de todos los elementos que hay de tipo `artisModel` dentro de nuestra base de datos. En caso de que no se encuentre se rompe la promesa especificada y se devuelve el error con código de status 500. En caso de que se encuentre un elemento en la colección que coincida se devuelve el objeto al cliente. De esta forma implementamos la petición `get` a través de una query string.
+
+```TypeScript
+import * as express from 'express';
+import {artistModel} from '../schema/artistSchema';
+
+export const artistRouter = express.Router();
+
+artistRouter.get('/artist', async (req, res) => {
+  const filter = req.query.name?{name: req.query.name.toString()}:{};
+  try {
+    const resultSearch = await artistModel.find(filter);
+    if (resultSearch.length !== 0) {
+      return res.send(resultSearch);
+    }
+    return res.status(404).send();
+  } catch (error) {
+    return res.status(500).send();
+  }
+});
+
+```
+
+
+Hay otra función get especificada que realiza el mismo funcionamiento pero esta vez recibe el **ID** del objeto que quiere buscar logrando ser una función más corta y óptima ya  model` tiene un método `findById()` al cual se le pasa el id y comprueba si existe, en caso afirmativo, devolvuelve el resultado.
+
+```TypeScript
+
+artistRouter.get('/artist/:id', async (req, res) => {
+  try {
+    const artistFindById = await artistModel.findById(req.params.id);
+    if (!artistFindById) {
+      return res.status(404).send();
+    }
+    return res.send(artistFindById);
+  } catch (error) {
+    return res.status(500).send();
+  }
+});
+```
+* En el caso de que la petición sea `post`: se recibe a través de la promesa  `req` los datos necesarios en el cuerpo de la peticion para crear un nuevo objeto en la base de datos. No hace falta asegurarse de que los datos recibidos esten en el formato correcto, esto ya lo hacemos en los modelos especificados. Por lo que simplemente hacemos  un nuevo objeto con los valores pasado al cuerpo de la peticion y después hacemos uso de la función `save()` que guardará en la coleccion este nuevo objeto.
+
+```TypeScript
+artistRouter.post('/artist', async (req, res) => {
+  const canciones = req.body.songList;
+  let sumaOyentes: number = 0;
+  for (let i in canciones) {
+    sumaOyentes += canciones[i].listener;
+  }
+  req.body.listenerMensual = sumaOyentes;
+  const artista = new artistModel(req.body);
+  try {
+    await artista.save();
+    res.status(201).send(artista);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+```
+Esta petición tiene un plus y esque se realiza previamente a la creación del objeto el cálculo de los oyentes mensuales de un artista. Para ello obtenemos de la petición todas las canciones que tiene el artistas, las recorremos y vamos sumando de forma concatenada los oyentes de la canción para finalmente cuando acabe la suma asociarla al valor de los oyentes. Realizando la parte solicitada de calcular en base a los oyentes de las canciones los oyentes mensuales de los artistas. De hecho se realizó un plus muy similar que es sacar la duracion de la playlist en base a la duracion de cada cancion que este dentro de la playlist. Simplemente se obtiene el array de canciones y se van sumando para posteriormente asociarlo a la duracion de la playlist, tal y como puede observarse.
+
+```TypeScript
+playlistRouter.post('/playlist', async (req, res) => {
+  const canciones = req.body.songs;
+  let sumaDuration: number = 0;
+  for (let i in canciones) {
+    sumaDuration += canciones[i].duration;
+  }
+  req.body.duration = sumaDuration;
+
+  const playlist = new playlistModel(req.body);
+  try {
+    await playlist.save();
+    res.status(201).send(playlist);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+```
+
+* En el caso de que la petición sea una modificación `patch`: esta la consideraría la funcionalidad más complicada puesto que especificamos una serie de variables actualizables y se comprueba si los elementos nuevos que se han recibido en el cuerpo se pueden actualizar. Tras habernos asegurado de que se puede realizar la actualización se realiza la función `findOneAndUpdate` que su función es básicamente buscar el nombre del artista en la base de datos  una vez encontrado, se sustituye el body por los datos nuevos a actualizar.
+
+
+```TypeScript
+artistRouter.patch('/artist', async (req, res) => {
+  console.log(`Artista que se quiere modificar: ${req.body.name}`);
+  if (!req.body.name) {
+    return res.status(400).send({
+      error: 'Un artista debe de ser especificado',
+    });
+  }
+  const allowedUpdates = ['name', 'genres', 'songList'];
+  const actualUpdates = Object.keys(req.body);
+  const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
+
+  if (!isValidUpdate) {
+    return res.status(400).send({
+      error: 'No se puede modificar',
+    });
+  }
+
+  try {
+    const artistModify = await artistModel.findOneAndUpdate({name: req.body.name.toString()}, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!artistModify) {
+      return res.status(404).send();
+    }
+
+    return res.send(artistModify);
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+});
+
+```
+
+Se realizo el mismo método pero esta vez por **ID** en este caso el funcionamiento es el mismo pero esta vez con la función `findByIdAndUpdate` que busca el elemento por su ID y sustituye el cuerpo por el especificado en la petición.
+
+```TypeScript
+artistRouter.patch('/artist/:id', async (req, res) => {
+  const allowedUpdates = ['name', 'genres', 'songList'];
+  const actualUpdates = Object.keys(req.body);
+  const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
+
+  if (!isValidUpdate) {
+    return res.status(400).send({
+      error: 'No se puede modificar',
+    });
+  }
+
+  try {
+    const artistModify = await artistModel.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!artistModify) {
+      return res.status(404).send();
+    }
+
+    return res.send(artistModify);
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+});
+
+```
+
+* En el caso de que la petición sea `delete`: En el caso de que se quiera eliminar un elemento de la colección, recibe el query string con el nombre del elemento que se quiere eliminar, comprueba que no este vacía y que exista dentro de la base de datos. En caso de que se encuentre este elemento se elimina de la base de datos todas las coincidencias que encuentre con el método `findOneAndDelete`. Una vez eliminado el objeto se devuelve el objeto que se ha eliminado al usuario.
+
+```TypeScript
+
+artistRouter.delete('/artist', async (req, res) => {
+  console.log(`Se va a eliminar el artista: ${req.query.name}`);
+  if (!req.query.name) {
+    return res.status(400).send({
+      error: 'Se debe introducir el nombre de un artista',
+    });
+  }
+
+  try {
+    const artistDeleted = await artistModel.findOneAndDelete({name: req.query.name.toString()});
+    if (!artistDeleted) {
+      return res.status(404).send();
+    }
+    return res.send(artistDeleted);
+  } catch (error) {
+    return res.status(400).send();
+  }
+});
+```
+Al igual que se hizo con las anteriores, también realizamos la eliminación a través del **ID** del objeto en la base de datos. tras buscarlo y encontrarlo se elimina con la funcion `findByIdAndDelete` devolviendo como resultado el objeto que se ha eliminado de la colección.
+
+```TypeScript
+artistRouter.delete('/artist/:id', async (req, res) => {
+  try {
+    const artistDeleted = await artistModel.findByIdAndDelete(req.params.id);
+
+    if (!artistDeleted) {
+      return res.status(404).send();
+    }
+
+    return res.send(artistDeleted);
+  } catch (error) {
+    return res.status(400).send();
+  }
+});
+```
+
+Resaltar que para los dos routers restantes el funcionamiento es el mismo solo cambiando la estructura de datos a la necesarioa al hacer una petición sobre el body.
+
+### 2.9. Fichero Mongoose.ts. <a name="id29"></a>
+
 ```
 code
 ```
@@ -605,28 +825,7 @@ code
 ```
 test
 ```
-
-### 2.8. Router Artista. <a name="id28"></a>
-
-```
-code
-```
-
-
-```
-test
-```
-### 2.9. Router Cancion. <a name="id29"></a>
-
-```
-code
-```
-
-
-```
-test
-```
-### 2.10. Router Playlist. <a name="id210"></a>
+### 2.10. Fichero index.ts. <a name="id210"></a>
 
 ```
 code
@@ -639,29 +838,7 @@ test
 
 <br/><br/>
 
-### 2.11. Fichero Mongoose.ts. <a name="id211"></a>
 
-```
-code
-```
-
-
-```
-test
-```
-<br/><br/>
-
-### 2.12. Fichero index.ts. <a name="id212"></a>
-
-```
-code
-```
-
-
-```
-test
-```
-<br/><br/>
 
 ## 3. Intrucciones de uso. <a name="id3"></a>
 
