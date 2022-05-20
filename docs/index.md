@@ -301,6 +301,8 @@ Los objetivos que se han propuesto y se han cumplido son:
 * 6. MongoDB Atlas
 * 7. Heroku para 
 
+mongodb+srv://iSounD:iSoundDSI@cluster0.yp5l1.mongodb.net/iSOunD
+
 A forma de resumen para concluir, gracias a esta práctica y los diversos módulos abordados hemos podido crear una aplicación intuitiva, sólida y robusta para implementar, en este caso, un sistema de gestión de información musical.
 
 
