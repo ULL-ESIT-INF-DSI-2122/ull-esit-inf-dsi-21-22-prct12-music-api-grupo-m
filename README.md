@@ -12,9 +12,9 @@ Se pretente implementar una API REST sobre un sistema que permite almacenar y ma
 Para la ejecución del código se recomienda la utilización de la herramienta de ThunderClient que permite mandar diversas peticiones a nuestra base de datos desplegada con Heroku y MongoDB Atlas. Aunque para mayor comodidad se exportará un fichero con una serie de operaciones básicas la cual se puede importar dentro de ThunderClient para su comprobación.
 
 
-> Para acceder al informe de la práctica 12 piche [aquí]()
+> Para acceder al informe de la práctica 12 piche [aquí](https://github.com/ULL-ESIT-INF-DSI-2122/ull-esit-inf-dsi-21-22-prct12-music-api-grupo-m/blob/main/docs/index.md)
 
-> Para acceder al informe a través de Github Pages, pinche [aquí]() o acceda a través del siguiente enlace:
+> Para acceder al informe a través de Github Pages, pinche [aquí](https://ull-esit-inf-dsi-2122.github.io/ull-esit-inf-dsi-21-22-prct12-music-api-grupo-m/#id23) o acceda a través del siguiente enlace:https://ull-esit-inf-dsi-2122.github.io/ull-esit-inf-dsi-21-22-prct12-music-api-grupo-m/#id23
 
 > Si desea acceder a la documentación de Typedoc puede acceder a través de la extensión Live Server ejecutando el siguiente.
 
