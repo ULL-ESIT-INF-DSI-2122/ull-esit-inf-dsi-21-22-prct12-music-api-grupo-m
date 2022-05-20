@@ -37,6 +37,8 @@
   2.9. [Fichero Mongoose.ts](#id29)
 
   2.10. [Fichero index.ts.](#id210)
+  
+  2.11. [Despliegue de la API](#id211)
     
 3. [Instrucciones de Uso.](#id3)
 
@@ -817,34 +819,194 @@ Resaltar que para los dos routers restantes el funcionamiento es el mismo solo c
 
 ### 2.9. Fichero Mongoose.ts. <a name="id29"></a>
 
-```
-code
+Para implementar la base de datos se ha solicitado que hagamos uso de `MongoDB` un módulo bastante potente que permite tanto crear como gestionar una base de datos, para probarlo a nivel local se ha instalado la extensión para Visual Studio Code. Y nos apoyamos en `Mongoose` para implementar un fichero capaz de establecer una conexión con nuestra base de datos, iSOunD. 
+
+Más detalladamente hacemos todo esto a través del fichero `src/database/mongoose.ts`. Donde básicamente hacemos uso del módulo `connect` de Mongoose, se define la URL de conexión, *mongoDBUrl*  en nuestro caso, en caso de que reciba una dirección dinámica se almacena y se hace uso de esta dirección puesto que el módulo con el que vamos a desplegar la API denominado con `Heroku` trabaja con ip's dinámicas es conveniente tener en cuenta que esto es bastante importante. en caso de que no se encuentre una ip dinamica tomará como conexión la direccion 127.0.0.1:27017 a la base de datos. Posteriormente analizamos si al utilizar connect sobre la URL surge un error, en caso de que suceda algun error lo visualizamos por la terminal y en caso de que se establezca la conexión mostramos en mensaje correspondiente.
+
+```TypeScript
+import {connect} from 'mongoose';
+
+const mongoDBUrl = process.env.MONGODB_URL || 'mongodb://127.0.0.1:27017/iSOunD';
+
+connect(mongoDBUrl, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+}).then(() => {
+  console.log('Conexión al servidor de MongoDB establecida');
+}).catch(() => {
+  console.log('No ha sido posible conectarse al servidor de MongoDB');
+});
+
 ```
 
-
-```
-test
-```
 ### 2.10. Fichero index.ts. <a name="id210"></a>
 
-```
-code
-```
 
+En este fichero, el cual es el que vamos a ejecutar para a nivel local hacer peticiones a nuestra API, se define a rasgos generales la gestion y la conexión del servidor a posibles peticiones. Por lo que tras importar aquellos módulos necesarios declaramos una aplicacion `express` y deifinimos que se hagan uso de los diversos routers que hemos definido, posteriormente, definimos el puerto que va a escuchar y desplegamos el servidor en este.
 
-```
-test
+```TypeScript
+import express = require('express');
+import './database/mongoose';
+
+import {artistRouter} from './routers/artistRouter';
+import {songRouter} from './routers/songRouter';
+import {playlistRouter} from './routers/playlistRouter';
+import {defaultRouter} from './routers/defaultRouter';
+
+const app = express();
+app.use(express.json());
+app.use(artistRouter);
+app.use(songRouter);
+app.use(playlistRouter);
+app.use(defaultRouter);
+
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
+  console.log(`Servidor desplegado en el puerto ${port}`);
+});
+
 ```
 
 <br/><br/>
 
 
 
-## 3. Intrucciones de uso. <a name="id3"></a>
+### 2.11. Despliegue de la API <a name="id211"></a>
 
-Aqui van las intrucciones una vez desplegada la API
+Para realizar el despliegue de la API hemos utilizado dos principales tecnologías:
+
+1. **MongoDB Atlas**: Esta extensión es por así decirlo, la continuación de MongoDB. Puesto que nos ofrece la posibilidad de almacenar de manera online en la nube nuestra base de datos implementada con `MongoDB`. Además también esta `MongoDB Compass` que de forma sencilla, es una aplicación externa que se instala en nuestro sistema y permite crear un cluster a través de la página de MongoDB Atlas esta permite acceder a este Cluster usando la aplicación e indicando la dirección de Atlas.
+
+Todo ello con el objetivo de implementar una aplicación que permita realizar diferentes peticiones a la base de datos en la nube y observar las operaciones CRUD sobre los contenidos que posee esta estrcutura de almacenamiento.
+
+Los pasos a seguir son basicamente:
+
+* Crear una cuenta institucional en la aplicación Web de [MongoDB Atlas](https://www.mongodb.com/atlas/database).
+* Crear una nueva Organización y Proyecto
+* Crear el Clúster 
+* Configurar el Clúster escogiendo servidor etc...
+* Crear un usuario y contraseña como método de autenticación y especificar la IP de conexión que será `0.0.0.0/0,` que representa a cualquier IP válida. Lo anterior es necesario dado que la IP del servidor donde se encontrará desplegada la aplicación en Heroku es dinámica.
+* Y finalmente, darle a connect y conectarse a través de `MongoDB Compass`.
+
+2. **Heroku**: Por otro lado está [Heroku](https://www.heroku.com) que se encargará una vez creado el clúster de desplegar la API. Aunque se pueda realizar toda la confiuración de la API en la propia web de Heroku, por comodidad, nosotros lo realizaremos a través de la terminal. Por lo que tras haber realizado las modificaciones en el `package.json` añadiendo la opcion de *engines* y el *heroku-postbuild*. esto es debido a que heroku realiza unos pasos previos definidos para desplegar una aplicación , si desea saber más le recomandamos que lea la teoría referente a esta parte puesto que se explica de forma clara estos pasos, puede encontrarla [aquí](https://ull-esit-inf-dsi-2122.github.io/nodejs-theory/nodejs-deployment.html). Básicamente a todo lo que tenemos hayq ue añadir estas propiedades.
+
+```JSON
+...
+...
+  "scripts": {
+    "heroku-postbuild": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc-watch --onSuccess \"node dist/index.js\""
+  },
+  "engines": {
+    "node": "16.x"
+  },
+...
+...
+
+```
+
+
+Despues instalamos Heroku en la máquina virtual 
+
+```
+$sudo snap install --classic heroku
+$heroku --version
+$heroku login
+```
+
+Tras iniciar sesión con `heroku login`, se añade la clave publica de la máquina virtual situada en `sudo snap install --classic heroku` para ello accedemos a los ajutes de la cuenta indicados con el icono de un *ninja*. y creamos la app con el siguiente comando:
+
+```
+$ heroku apps:create --region eu isound-api-joel-mica
+
+``` 
+
+Una vez creada la API, antes de desplegarla debemos indicar la URL de conexión en los ajustes
+
+```
+$heroku config:set MONGODB_URL=mongodb+srv://iSounD:iSoundDSI@cluster0.yp5l1.mongodb.net/iSOunD.
+```
+Y ahora si que desplegamos la API con:
+
+```
+$git push heroku master
+```
+
+y a través del comando  `$heroku logs` comprobamos que todo haya ido sin problemas logrando desplegar la API. Ahora si queremos realizar peticiones debemos utilizar como dirección en `ThunderClient`: 
+
+>> https://isound-api-joel-mica.herokuapp.com/
+
+<br/><br/>
+
+## 3. Intrucciones de uso. <a name="id3"></a>
+En este apartado explicaremos todo lo referente al funcionamiento de la API. Previamente deberiamos de descargar la extensión para Visual Studio Code de `Thunder Client` ya que será la herramienta con la que haremos las pruebas de nuestra aplicación. en el directorio principal podremos encontrar una carpeta denominada `ThunderClientTest` donde se encuentra el fichero con unas pruebas por defecto exportadas bastará con importarlas en Thunder Client para hacer las pruebas por defecto en la API. 
+
+Sin embargo, en caso de querer realizar pruebas externas a estas previamente prepararadas, el funcionamiento es sencillo. En la parte superior de la extensión creamos una nueva petición (`new request`). Se abrirá un editor donde seleccionamos el tipo de petición que se quiere hacer en el sistema (get, post, patch o delete). Y al lado se encuentra la dirección a la que se quiere mandar la petición ene ste caso será la dirección de la aplicación desplegada, esta es:
 
 https://isound-api-joel-mica.herokuapp.com/song
+
+Previamente dependerá sobre que colección queremos hacer la operacion si queremos trabajar con canciones la ruta deberá ser `.../song`, para el caso de artistas `.../artist` y para el caso de playlist `.../playlist`.
+
+Ahora dependiendo de la petición deberemos añadir o no un cuerpo (body). En el caso de querer obtener datos (Get) o eliminar un objeto (delete) las peticiones serán similares a las siguientes
+
+* Para **Obtener datos**, deberá de ser la operacion de tipo GET: 
+  * GET con Nombre: `https://isound-api-joel-mica.herokuapp.com/song?name=Nombre de la Cancion`.
+  * GET con ID: `https://isound-api-joel-mica.herokuapp.com/song/ID de la canción`.
+
+* Para **Eliminar datos**, deberá de ser la operacion de tipo DELETE: 
+  * DELETE con Nombre: `https://isound-api-joel-mica.herokuapp.com/song?name=Nombre de la Cancion a eliminar`.
+  * DELETE con ID: `https://isound-api-joel-mica.herokuapp.com/song/ID de la canción a eliminar`.
+
+En el caso de querer modificar datos (patch) o crear objetos (create) las peticiones serán similares a las siguientes:
+
+* Para **Crear datos**, deberá de ser la operacion de tipo POST: 
+  * MODIFICAR (PATCH) con Nombre: `https://isound-api-joel-mica.herokuapp.com/song`.
+  en el Body, establecemos como queremos que sea el objeto:
+  
+```JSON
+{
+    "name": "Montero",
+    "author": ["Lil Nash X"],
+    "duration": 3.20,
+    "genres": ["RAP", "POP"],
+    "single": false,
+    "reproduction": 54302,
+    "listener": 500
+}
+```
+
+* Para **Modificar datos**, deberá de ser la operacion de tipo PATCH: 
+  * MODIFICAR (PATCH) con Nombre: `https://isound-api-joel-mica.herokuapp.com/song?name=Nombre de la Cancion a modificar`.
+  en el Body, cambiamos los valores que queremos y le damos a SEND:
+```JSON
+{
+    "name": "Montero",
+    "author": ["Lil Nash X"],
+    "duration": 5.40,
+    "genres": ["RAP"],
+    "single": true,
+    "reproduction": 54302,
+    "listener": 570
+}
+```
+  * MODIFICAR (PATCH) con ID: `https://isound-api-joel-mica.herokuapp.com/song/ ID de la Cancion a modificar`.
+  en el Body, cambiamos los valores que queremos y le damos a SEND:
+```JSON
+{
+    "name": "Montero",
+    "author": ["Lil Nash X"],
+    "duration": 5.40,
+    "genres": ["RAP"],
+    "single": true,
+    "reproduction": 54302,
+    "listener": 570
+}
+```
+
 
 ## 4. Dificultades. <a name="id4"></a>
 
@@ -876,9 +1038,7 @@ Los objetivos que se han propuesto y se han cumplido son:
 * 6. MongoDB Atlas para establecer un Cluster y un servidor al que acceder al hacer peticiones.
 * 7. Heroku para desplegar la API y asociarle una dirección.
 
-mongodb+srv://iSounD:iSoundDSI@cluster0.yp5l1.mongodb.net/iSOunD
-
-A forma de resumen para concluir, gracias a esta práctica y los diversos módulos abordados hemos podido crear una aplicación intuitiva, sólida y robusta para implementar, en este caso, un sistema de gestión de información musical.
+A forma de resumen para concluir, gracias a esta práctica y los diversos módulos abordados hemos podido crear una aplicación intuitiva, sólida y robusta para implementar, en este caso, un sistema de gestión de información musical (canciones, artistas y playlist).
 
 
 ## 6. Referencias. <a name="id6"></a>
