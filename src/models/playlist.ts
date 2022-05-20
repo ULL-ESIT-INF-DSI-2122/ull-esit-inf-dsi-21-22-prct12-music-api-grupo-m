@@ -1,13 +1,13 @@
 import {Song} from "./song";
 import {genreInfo} from "./song";
 /**
- * Clase encargada de definir el funcionamiento de una lista de reproduccion de musica de una plataforma digital.
+ * Clase encargada de definir el funcionamiento de una lista de reproduccion de diversas canciones (Playlist) de una plataforma digital.
  */
 export class Playlist {
   /**
    * Constructor de la clase Playlist que define el funcionamiento de una lista de reproduccion.
    * @param name Nombre de la playlist.
-   * @param songs Canciones incluidas dentro de la playlist.
+   * @param songs Lisya de canciones que componen la playlist.
    * @param duration duracion total de la playlist en horas y minutos.
    * @param genres genres musicales que se incluyen dentro de la playlist.
    */
@@ -27,7 +27,7 @@ export class Playlist {
   }
 
   /**
-  * Metodo que se encarga de obtener el nombre de una cancion del array de playlist
+  * Metodo que se encarga de obtener el nombre de una cancion del array de canciones
   * @returns devuelve el nombre de una cancion de todas las que recoge la lista
   */
   getNameSong(): string {

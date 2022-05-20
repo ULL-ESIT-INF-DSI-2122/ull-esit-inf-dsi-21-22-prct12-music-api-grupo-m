@@ -2,15 +2,15 @@ import {Song} from "./song";
 import {genreInfo} from "./song";
 
 /**
- * Clase encargada de especificar a los diferentes musicos u artistas que forman parte de grupos o tienen carreras en solitario.
+ * Clase encargada de especificar a los diferentes musicos u artistas que han comopuesto una cancion.
  */
 export class Artist {
   /**
-   * Constructor de la entidad Artistas del sistema.
+   * Constructor de la entidad Artistas dentro del sistema.
    * @param name nombre del artista.
-   * @param genre generos en los que suele trabajar el artista
-   * @param listenerMensual Cantidad de oyentes mensuales de un grupo, en caso de ser una carrera solitaria es igual a los oyentes individuales.
-   * @param songList lista de las canciones del artista
+   * @param genre generos en los que suele trabajar el artista.
+   * @param listenerMensual Cantidad de oyentes mensuales de un artista.
+   * @param songList lista de las canciones que ha publicado un artista.
    */
   constructor(private name: string, private genres: genreInfo[], private songList: Song[], private listenerMensual: number) {
     this.name = name;
@@ -18,21 +18,13 @@ export class Artist {
     this.songList = songList;
     this.listenerMensual = listenerMensual;
   }
-  
+
   /**
    * metodo encargado de devolver el nombre del artista
    * @returns devuelve el nombre del artista
    */
   getName(): string {
     return this.name;
-  }
-
-  /**
-   * Metodo que establece un nuevo nombre a un artista
-   * @param newName nuevo nombre que se le quiere asociar a un artista
-   */
-  setName(newName: string): void {
-    this.name = newName;
   }
 
   /**
@@ -60,6 +52,13 @@ export class Artist {
   }
 
   /**
+   * Método encargado de obtener los oyentes mensuales de un artista.
+   * @returns devuelve los oyentes mensuales de un artista.
+   */
+  public getListeners(): number {
+    return this.listenerMensual;
+  }
+  /**
    * Funcion que calcula la cantidad de oyentes mensuales totales en base al trabajo individual
    * @returns devuelve la suma del trabajo individual mas la cantidad de oyentes mensuales.
    */
@@ -74,25 +73,10 @@ export class Artist {
   }
 
   /**
-   * Metodo encargado de añadir un nuevo elemento al atributo privados song
-   * @param newGrupo Nuevo item a añadir a la lista de canciones
-   * @return añade una nueva cancion.
+   * Metodo que establece un nuevo nombre a un artista
+   * @param newName nuevo nombre que se le quiere asociar a un artista
    */
-  /*public setSongList(newList: Song[]): void {
-    this.songList = newList;
-    
-  }*/
-
-  /**
-   * metodo que añade una nueva cancion que ha sacado el artista
-   * @param newSong nueva cancion que publico el artista
-   */
-  /*public setSong(newSong: Song): void {
-    this.songsList.push(newSong);
-  }*/
-
-
-  public getListeners(): number {
-    return this.listenerMensual;
+  setName(newName: string): void {
+    this.name = newName;
   }
 }

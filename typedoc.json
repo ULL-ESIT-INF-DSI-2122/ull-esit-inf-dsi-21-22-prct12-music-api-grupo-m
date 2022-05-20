@@ -1,7 +1,21 @@
 {
 	"entryPoints": [
-		"./src/ejercicio1clase.ts",
-        "./src/name_exercice"
+		"./src/index.ts",
+
+        "./src/database/mongoose.ts",
+
+		"./src/models/artist.ts",
+		"./src/models/playlist.ts",
+		"./src/models/song.ts",
+
+		"./src/routers/artistRouter.ts",
+		"./src/routers/defaultRouter.ts",
+		"./src/routers/playlistRouter.ts",
+		"./src/routers/songRouter.ts",
+
+		"./src/schema/artistSchema.ts",
+		"./src/schema/playlistSchema.ts",
+		"./src/schema/songSchema.ts"
 	], 
 	"out": "./docs/typedoc"
 }

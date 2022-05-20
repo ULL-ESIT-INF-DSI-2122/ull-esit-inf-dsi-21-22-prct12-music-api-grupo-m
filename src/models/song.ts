@@ -1,22 +1,21 @@
-import {Artist} from "./artist";
 /**
  * Objeto genreInfo que define los diferentes genero reconocidos dentro del sistema.
  */
 export type genreInfo = 'CLASICA'| 'ROCK'| 'HIP-HOP' | 'REGGEATON' | 'POP' | 'TRAP' | 'PUNK' | 'K-POP' | 'METAL' | 'CUMBIA' | 'BLUES' | 'JAZZ'| 'COUNTRY' | 'EDM' | 'FLAMENCO' | 'SALSA' | 'REGGAE' | 'GOSPEL' | 'DISCO' | 'BANDA SONORA' | 'ALTERNATIVO' | 'ELECTROPOP' | 'SOUL' | 'R&B' | 'RAP' | 'INDIE';
 
 /**
- * Clase encargada de representar la cancion que ha publicado un artista y que se encuentra en un Album.
+ * Clase encargada de representar una Canción en el sistema, el cual es una cantidad de atributos definidos.
  */
 export class Song {
   /**
-  * Constructor de uya cancion del sistema.
+  * Constructor de una cancion en el sistema.
   * @param name titulo de la cancion.
   * @param autor autor de la cancion.
   * @param duration tiempo de duracion de la cancion musical.
   * @param genres genero en el que se engloba la cancion
   * @param single flag que determina si fue un single o es lanzado en un album
   * @param reproductions numero total de reproducciones de esta cancion
-  * @param listener oyentes mensuales de la cancion
+  * @param listener oyentes de la cancion
   */
 
   constructor(private name: string, private author: String[], private duration: number, private genres: genreInfo[], private single: boolean, private reproductions: number, private listener: number) {
@@ -37,25 +36,18 @@ export class Song {
     return this.name;
   }
 
+  /**
+   * Método encargado de obtener los oyentes de una canción
+   * @returns devuelve los oyentes de una cancion
+   */
   getListener(): number {
     return this.listener;
   }
 
-  isFormat(numero: number): number {
-    let numberFormat: number | undefined;
-    let RE = /^\d*(\.\d{1})?\d{0,1}$/;
-    const stringNumber = numero.toString();
-    if (RE.test(stringNumber)) {
-      numberFormat = numero;
-    } else {
-      numberFormat = NaN;
-    }
-    return numberFormat;
-  }
 
   /**
   * Metodo que obtiene el autor de la cancion ya sea un artista
-  * @returns devuelve un array de artistas o de grupos que ha realizado la cancion
+  * @returns devuelve un array de string que ha compuesto la cancion
   */
   getAutor(): String[] {
     return this.author;
@@ -91,6 +83,23 @@ export class Song {
   */
   getSingle(): boolean {
     return this.single;
+  }
+
+  /**
+   * Método que convierte un número al formato XX.XX
+   * @param numero numero en formato
+   * @returns devuelve el numero en formato de minutos y segundos
+   */
+  isFormat(numero: number): number {
+    let numberFormat: number | undefined;
+    let RE = /^\d*(\.\d{1})?\d{0,1}$/;
+    const stringNumber = numero.toString();
+    if (RE.test(stringNumber)) {
+      numberFormat = numero;
+    } else {
+      numberFormat = NaN;
+    }
+    return numberFormat;
   }
 }
 
