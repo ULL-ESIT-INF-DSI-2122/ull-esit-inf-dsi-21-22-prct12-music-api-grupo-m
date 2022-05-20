@@ -20,7 +20,7 @@ export const songSchema = new mongoose.Schema({
     trim: true,
     validate: (value: string) => {
       if (!value.match(/^[A-Za-z0-9]*$/)) {
-        throw new Error('El nombre de la cancion tiene que empezar con una mayúscula y solo pueden estar formados por letras.');
+        throw new Error('El nombre de la cancion tiene que empezar con una mayúscula y solo pueden estar formados por letras o numeros.');
       }
     },
   },

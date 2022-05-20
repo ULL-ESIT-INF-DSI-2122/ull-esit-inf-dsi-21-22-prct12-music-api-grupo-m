@@ -28,16 +28,16 @@ export const playlistSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  duration: {
+    type: Number,
+    required: false,
+  },
   genres: {
     type: [String],
     required: true,
     trim: true,
     enum: ['CLASICA', 'ROCK', 'HIP-HOP', 'REGGEATON', 'POP', 'TRAP', 'PUNK', 'K-POP', 'METAL', 'CUMBIA', 'BLUES',
       'JAZZ', 'COUNTRY', 'EDM', 'FLAMENCO', 'SALSA', 'REGGAE', 'GOSPEL', 'DISCO', 'BANDA SONORA', 'ALTERNATIVO', 'ELECTROPOP', 'SOUL', 'R&B', 'RAP', 'INDIE'],
-  },
-  duration: {
-    type: Number,
-    required: false,
   },
 });
 

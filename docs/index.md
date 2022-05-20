@@ -2,9 +2,15 @@
 # Desarrollo de Sistemas Informáticos
 # Universidad de la Laguna
 
-### Autor:  
+***
+
+### Autores:  
   * Joel Francisco Escobar Socas - alu0101130408@ull.edu.es
   * Micaela Lucia Mungay Juncal- alu0101124506@ull.edu.es
+
+***
+
+***
 
 ### Índice:
 
@@ -43,6 +49,8 @@
 5. [Conclusión.](#id5)
 
 6. [Referencias.](#id6)
+
+***
 
 <br/><br/>
 
@@ -96,106 +104,494 @@ La estructura que se ha adoptado en la carpeta `src` de este proyecto es la sigu
 
 * **index.ts**: Este es el fichero principal que ejecuta el sistema, principalmente se centra en especificar el puerto de conexión y las rutas de los diferentes puntos de acceso a la aplicación.
 
-De forma resumida este es el contenido del directorio fuente de nuestra aplicación. Sin embargo, en los siguientes puntos vamos a explicar más en profundidad estos ficheros y la funcionalidad que toma.
+De forma resumida este es el contenido del directorio fuente de nuestra aplicación. Sin embargo, en los siguientes puntos vamos a explicar más en profundidad estos ficheros y su funcionalidad.
+
+Antes de explicar estas clases nos gustaría comentar que como se nos pide que se almacenen y opere con canciones, artistas y playlist estas son las clases que hemos definido. Sin embargo, hemos tomado la desicion de redifinir estas mismas para que se adapte más a los solicitado en el [guion](https://ull-esit-inf-dsi-2122.github.io/prct12-music-api/).
 
 ### 2.1. Clase Artista. <a name="id21"></a>
 
-La clase `1` es la encargada de descripcion.
+Dentro de estos cambios comentados ahora la clase `artista` implementa a la clase `cancion`, es decir, hemos visto que es mejor que se implemente en un artista una lista con todas las canciones que ha publicado o lanzado esto se puede observar en el atributo **songList** del constructor. Antes se definia como atributo privado y a través de una funcion se iban añadiendo a esta lista las canciones una por una cosa que no era compatible con la prática puesto que se solicita que un artista tenga una lista de canciones y que ne base a esta lista se calculen los oyentes mensuales de un artista. 
 
-Para especificar el color que puede tener una nota, definimos un objeto que solo puede contener un color de entre todos los que se pueden implementar.
+El resto es lo mismo que lo que se ha podido observar en la práctica anterior. La clase `artist` se encarga de implementar lo que consideramos un artista o musico dentro de nuestro sistema, es decir, aquel autor de una canción o compositor que ha creado la canción. En el constructor de esta clase todos los atributos son privados y definimos el nombre del artista (name) que será un string, los generos en los que el artista está recogido (genres) que será un array de `genreInfo` que es un enum que define los diversos tipos de generos con los que contamos, luego se define la lista de canciones (songList) que es un array de objetos `Song` y por último los oyentes mensuales (listenerMensual) que se calculará automaticamente recorriendo cada oyente de las canciones, **listener** y sumando todos estos valores para posteriormente asignarlo a este atributo.
+
+En cuanto a los métodos que se implementan se hace uso de los métodos `Getters y Setter` que son métodos encargados de obtener o establecer valores a estos atributos privados, por lo que implementamos estos métodos por cada atributo.
+
 
 ```TypeScript
-export type ColorNotes = 'Red' | 'Green' | 'Blue' | 'Yellow';
+export class Artist {
+
+  constructor(private name: string, private genres: genreInfo[], private songList: Song[], private listenerMensual: number) {
+    this.name = name;
+    this.genres = genres;
+    this.songList = songList;
+    this.listenerMensual = listenerMensual;
+  }
+
+  getName(): string {
+    return this.name;
+  }
+
+  getGenre(): genreInfo[] {
+    return this.genres;
+  }
+
+  getSongList(): Song[] {
+    return this.songList;
+  }
+
+  getOyentesMensual():number {
+    return this.listenerMensual;
+  }
+
+  public getListeners(): number {
+    return this.listenerMensual;
+  }
+
+  public calOyentes(): number {
+    let result: number = 0;
+    if (this.songList.length > 0) {
+      this.songList.forEach((song) => {
+        result += song.getListener();
+      });
+    }
+    return result;
+  }
+
+  setName(newName: string): void {
+    this.name = newName;
+  }
+}
+
 ```
-Para implementar la nota definimos la estructura básica que ha de tener,es decir, el titulo de la nota (*string*), el cuerpo de la nota (*string*) y el color de la nota (*ColorNote*).
-
-Posteriormente se definen los métodos de acceso necesarios *Getters y Setter* para poder acceder o obtener los valores de estos atributos privados. Además de estos métodos tambien definimos por un lado **printTitle** que dependiendo del color de la nota que se introdujo a través de un string, muestra por consola a través de chark el titulo con el color que se introdujo. Por otro lado la función **printBody** realiza la misma idea pero con el cuerpo de la nota.
+Para realizar las pruebas unitarias desarrolladas en la metodologia TDD sobre la clase `artist`, se define una instancia de esta clase y se comprueban los métodos de acceso *Getters y Setters* por cada artista, que en este caso es uno, Billie Eillish.
 
 ```TypeScript
-code
-```
-Para realizar las pruebas unitarias desarrolladas en la metodologia TDD sobre esta clase `Note`, se define instancian los objetos de la clase nota y se comprueban los métodos de acceso *Getters y Setters*.
+import 'mocha';
+import {expect} from 'chai';
+import {Artist} from '../src/models/artist';
+import {Song} from '../src/models/song';
 
-```TypeScript
-test
+let song1 = new Song("Listen Before I Go", ['Billie Eillish'], 4.03, ['POP'], false, 82368601, 823680);
+let song2 = new Song("Billie Bossa Nova", ['Billie Eillish'], 3.16, ['R&B'], false, 87082953, 870820);
+let song3 = new Song("my future", ['Billie Eillish'], 3.30, ['R&B'], true, 306917025, 3069170);
+let song4 = new Song("Oxytocin", ['Billie Eillish'], 3.30, ['POP'], false, 82436281, 824360);
+
+let artist1 = new Artist("Billie Eillish", ['POP', 'ALTERNATIVO'], [song1, song2, song3, song4], 82368601);
+
+describe('Tests de la clase Artista', ()=>{
+  it('Test de instancia de los diferentes artistas', ()=> {
+    expect(artist1).to.exist;
+  });
+
+  it('Test de Métodos del artista', ()=> {
+    expect(artist1.getName()).to.be.eql('Billie Eillish');
+    expect(artist1.getGenre()).to.be.eql(['POP', 'ALTERNATIVO']);
+    expect(artist1.getSongList()).to.be.eql([song1, song2, song3, song4]);
+    expect(artist1.getListeners()).to.eql(82368601);
+  });
+});
 ```
 <br/><br/>
 
 ### 2.2. Clase Cancion. <a name="id22"></a>
 
+La clase canción también ha sido modificada en comparación con la clase `Song` de la práctica grupal anterior. En especifico puesto que creaba redundancia en las definiciones se ha optado por establecer el atributo privado `author` como un array de string con el nombre de los autores de la canciones. No se ha podido poner un objeto de tipo `Artist` puesto que creaba una redundancia, es decir, artista necesita un objeto cancion y un objeto cancion necesita un objeto artista por lo que al declararlo saltaba un problema con que clase debería definirse previamente. Por lo que hemos optado por esta desición especificando author como un string con el nombre del artista. El resto de la clase funciona igual que en la práctica anterior.
+
+previamente se define el objeto `genreInfo` que se exportará y será aquel que defina los diversos generos del sistema.
+
+```TypeScript
+export type genreInfo = 'CLASICA'| 'ROCK'| 'HIP-HOP' | 'REGGEATON' | 'POP' | 'TRAP' | 'PUNK' | 'K-POP' | 'METAL' | 'CUMBIA' | 'BLUES' | 'JAZZ'| 'COUNTRY' | 'EDM' | 'FLAMENCO' | 'SALSA' | 'REGGAE' | 'GOSPEL' | 'DISCO' | 'BANDA SONORA' | 'ALTERNATIVO' | 'ELECTROPOP' | 'SOUL' | 'R&B' | 'RAP' | 'INDIE';
+
 ```
-code
-```
+
+En cuanto a la clase `Song`, será el encargado de definir una canción en el sistema, el constructor recibirá diversos atributos que pondrá como privados. Estos son el nombre de la cancion (name) que sera de tipo string, el autor de la cancion (author) que será un array de string por lo comentado con anterioridad, la duracion de la cancion (duration) que será un numero en formato **xx.xx**, los generos de la canción (genres) que será un array de `genreInfo`, un flag (single) que determina si la canción fue un single (true) o no(false), el numero total de reproducciones de esta cancion (reproduction) y por ultimo el número de veces que se ha escuchado esta cancion (listener) que en artista lo recorreremos por cada cancion dentro y se sumará para sacar los oyentes mensuales.
+
+En cuanto a los métodos se han definido los métodos de acceso (`Getters y Setter`) necesarios para cada uno de estos atributos y además se ha creado una función pública denominada *isFormat* que comprueba que el formato de la duración de la canciones sea el esperado, es decir, **xx.xx** siendo el primer par minutos y el segundo par segundos respectivamente.
+
+```TypeScript
+export class Song {
+
+  constructor(private name: string, private author: String[], private duration: number, private genres: genreInfo[], private single: boolean, private reproductions: number, private listener: number) {
+    this.author = author;
+    this.duration = this.isFormat(duration);
+    this.genres = genres;
+    this.name = name;
+    this.reproductions = reproductions;
+    this.single = single;
+    this.listener = listener;
+  }
+
+  getName(): string {
+    return this.name;
+  }
+
+  getListener(): number {
+    return this.listener;
+  }
+
+  getAutor(): String[] {
+    return this.author;
+  }
+
+
+  getDuration(): number {
+    return this.duration;
+  }
+
+  getGenres(): genreInfo[] {
+    return this.genres;
+  }
+
+  getReproducciones(): number {
+    return this.reproductions;
+  }
+
+  getSingle(): boolean {
+    return this.single;
+  }
+
+  isFormat(numero: number): number {
+    let numberFormat: number | undefined;
+    let RE = /^\d*(\.\d{1})?\d{0,1}$/;
+    const stringNumber = numero.toString();
+    if (RE.test(stringNumber)) {
+      numberFormat = numero;
+    } else {
+      numberFormat = NaN;
+    }
+    return numberFormat;
+  }
+}
 
 
 ```
-test
+En cuanto a los test se han creado diversas canciones pertenecientes a diversos artistas y se ha comprobado cada método comentado con anterioridad.
+
+```TypeScript
+import 'mocha';
+import {expect} from 'chai';
+import {Song} from '../src/models/song';
+
+let song1 = new Song("Listen Before I Go", ['Billie Eillish'], 4.03, ['POP'], false, 82368601, 99512);
+let song2 = new Song("In the End", ['Likin Park'], 3.36, ['ROCK'], false, 654122, 22358);
+let song3 = new Song("Inmortal", ['J Cole'], 3.21, ['RAP', 'HIP-HOP'], true, 399964, 82368);
+
+describe('Tests de la clase Cancion', ()=>{
+  it('Test de instancia de diferentes Canciones', ()=> {
+    expect(song1).to.exist;
+    expect(song2).to.exist;
+    expect(song3).to.exist;
+  });
+
+  it('Test de los metodos de la Cancion numero 1', ()=>{
+    expect(song1.getName()).to.be.eql('Listen Before I Go');
+    expect(song1.getAutor()).to.be.eql(['Billie Eillish']);
+    expect(song1.getDuration()).to.be.eql(4.03);
+    expect(song1.getGenres()).to.be.eql(['POP']);
+    expect(song1.getReproducciones()).to.be.eql(82368601);
+    expect(song1.getSingle()).to.be.eql(false);
+    expect(song1.getListener()).to.be.eql(99512);
+  });
+  it('Test de los metodos de la Cancion numero 2', ()=>{
+    expect(song2.getName()).to.be.eql('In the End');
+    expect(song2.getAutor()).to.be.eql(['Likin Park']);
+    expect(song2.getDuration()).to.be.eql(3.36);
+    expect(song2.getGenres()).to.be.eql(['ROCK']);
+    expect(song2.getReproducciones()).to.be.eql(654122);
+    expect(song2.getSingle()).to.be.eql(false);
+    expect(song2.getListener()).to.be.eql(22358);
+  });
+  it('Test de los metodos de la Cancion numero 3', ()=>{
+    expect(song3.getName()).to.be.eql('Inmortal');
+    expect(song3.getAutor()).to.be.eql(['J Cole']);
+    expect(song3.getDuration()).to.be.eql(3.21);
+    expect(song3.getGenres()).to.be.eql(['RAP', 'HIP-HOP']);
+    expect(song3.getReproducciones()).to.be.eql(399964);
+    expect(song3.getSingle()).to.be.eql(true);
+    expect(song3.getListener()).to.be.eql(82368);
+  });
+});
+
 ```
 
 <br/><br/>
 
 ### 2.3. Clase Playlist. <a name="id23"></a>
 
-```
-code
+En cuanto a la clase `Playlist` no se ha cambiado su diseño puesto que una playlist contiene una lista de canciones que son las que el usuario quiere guardar y más tarde reproducir. Por lo que una playlist dentro de nuestro sistema tendra un atributo nombre (name) de tipo string, una lista de canciones (songs) que sera un array de `Song`, un array de generos (genres) que serán todos los generos que tiene la playlist `GenreInfo` y la duracion total de la playlist que se calcula automaticamente al crear la playlist puesto que es la suma de la duracion de las canciones.
+
+En cuanto a métodos, cuenta con los métodos de acceso necesarios (`Getters y Setters`) para cada uno de estos atributos.
+
+```TypeScript
+import {Song} from "./song";
+import {genreInfo} from "./song";
+
+export class Playlist {
+
+  constructor(private name: string, private songs: Song[], private duration: number, private genres: genreInfo[]) {
+    this.songs = songs;
+    this.duration = duration;
+    this.genres = genres;
+    this.name = name;
+  }
+
+  getSongs(): Song[] {
+    return this.songs;
+  }
+
+  getNameSong(): string {
+    this.songs.forEach((item) => {
+      return item.getName();
+    });
+    return "No existe ningun nombre";
+  }
+
+  getArtistSong(): string {
+    this.songs.forEach((item) => {
+      return item.getAutor();
+    });
+    return "No existe ningun Artista o Grupo asociado";
+  }
+
+  getDurationSong(): number {
+    this.songs.forEach((item) => {
+      return item.getDuration();
+    });
+    return -1;
+  }
+
+  getGenrePlaylist(): string {
+    this.songs.forEach((item) => {
+      return item.getGenres();
+    });
+    return "No existe Genero";
+  }
+
+  getDuration(): number {
+    return this.duration;
+  }
+
+  getGenres(): genreInfo[] {
+    return this.genres;
+  }
+
+  getName(): string {
+    return this.name;
+  }
+
+  setPlaylistSong(newItem: Song[]): void {
+    this.songs = newItem;
+  }
+}
+
 ```
 
+Para las pruebas unitarias de esta clases hemos comprobado que se cree de forma correcta una playlist que contiene diversas canciones mezcladas.
 
-```
-test
-```
+```TypeScript
+import 'mocha';
+import {expect} from 'chai';
+import {Playlist} from '../src/models/playlist';
+import {Song} from '../src/models/song';
 
-<br/><br/>
+let song1 = new Song("Listen Before I Go", ['Billie Eillish'], 4.03, ['POP'], false, 82368601, 823680);
+let song2 = new Song("Billie Bossa Nova", ['Billie Eillish'], 3.16, ['R&B'], false, 87082953, 870820);
+let song3 = new Song("my future", ['Billie Eillish'], 3.30, ['R&B'], true, 306917025, 3069170);
+let song4 = new Song("Oxytocin", ['Billie Eillish'], 3.30, ['POP'], false, 82436281, 824360);
+let song5 = new Song("In the End", ['Likin Park'], 3.36, ['ROCK'], false, 654122, 22358);
+let song6 = new Song("Inmortal", ['J Cole'], 3.21, ['RAP', 'HIP-HOP'], true, 399964, 82368);
 
-### 2.3. Clase Playlist. <a name="id23"></a>
-
-```
-code
-```
+let playlist1 = new Playlist("Playlist1", [song1, song2, song3, song4, song5, song6], 45.23, ['POP', 'ROCK', 'RAP']);
 
 
-```
-test
+describe('Test de la clase Playlist', ()=>{
+  it('Pruebas de instancia de Playlist', ()=>{
+    expect(playlist1).to.exist;
+  });
+  it('Test de los metodos de la playlist 1', ()=>{
+    expect(playlist1.getName()).to.be.eql('Playlist1');
+    expect(playlist1.getSongs()).to.be.eql([song1, song2, song3, song4, song5, song6]);
+    expect(playlist1.getGenres()).to.eql(['POP', 'ROCK', 'RAP']);
+    expect(playlist1.getDuration()).to.be.eql(45.23);
+  });
+});
 ```
 
 <br/><br/>
 
 ### 2.4. Esquema Artista. <a name="id24"></a>
 
-```
-code
-```
+Dentro de este proyecto en la ruta `src/schema/` encontramos los diversos esquemas con los que se define como se va a guardar la información en nuestra base de datos.
 
+Especificamente para ver el esquema de un artista, nos situamos en `src/schema/artisSchema.ts`. Aqui se define el esquema de la clase artistas, basicamente un esquema es un mecanismo por el cual se puede modelar un objeto en Mongoose, de forma resumida en un esquema se definen las cualidades de un objeto, en este caso artista, es decir, el nombre, los generos, las cancione y los oyentes. Hay que resaltar que como puede observar artista implementa dentro de este una lista de esquemas de tipo cancion, esto es debido a que un artista implementa diversas canciones y no al reves.
+
+Estos atributos tienen una serie de opciones que se activan para dar una cierta funcionalidad.
+* `type`: especifica el tipo de dato que se almacenará en ese campo especificado.
+* `required`: especifica si es un atributo obligatorio a la hora de crear el objeto, al colocarlo en **true** especificamos que los sea.
+* `unique`: define si puede haber objetos con este atributo duplicado en nuestra base de datos, si se activa **true**, entonces no se podrán repetir el atributo.
+* `trim`: Elimina los espacios sobrantes que pueda tener el string al principio y/o al final.
+* `validate`: Esta opcion especifica una comprobación que debe pasar este atributo. Por ejemplo, name  recibe el contenido a almacenar y realiza una comprobación. Esta comprobación se realiza a través de una expresión regular, que comprueba si la primera letra del string es una letra mayúscula contemplada en el alfabeto español.
+
+```TypeScript
+import * as mongoose from 'mongoose';
+import {Artist} from '../models/artist';
+import {songSchema} from '../schema/songSchema';
+
+export const artistSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    validate: (value: string) => {
+      if (!value.match(/^[A-ZñÑ][a-zA-ZñÑ ]*$/)) {
+        throw new Error('El nombre de los artistas tiene que empezar con una mayúscula y solo pueden estar formados por letras.');
+      }
+    },
+  },
+  genres: {
+    type: [String],
+    required: true,
+    trim: true,
+    enum: ['CLASICA', 'ROCK', 'HIP-HOP', 'REGGEATON', 'POP', 'TRAP', 'PUNK', 'K-POP', 'METAL', 'CUMBIA', 'BLUES',
+      'JAZZ', 'COUNTRY', 'EDM', 'FLAMENCO', 'SALSA', 'REGGAE', 'GOSPEL', 'DISCO', 'BANDA SONORA', 'ALTERNATIVO', 'ELECTROPOP', 'SOUL', 'R&B', 'RAP', 'INDIE'],
+  },
+
+  songList: {
+    type: [songSchema],
+    required: true,
+    trim: true,
+  },
+
+  listenerMensual: {
+    type: Number,
+    required: false,
+    trim: true,
+  },
+});
 
 ```
-test
+En la última línea del documento, se aplica el método `model` que especifica el esquema que debe seguir los objetos antes de ser insertados en una colección de la base de datos.
+
+```TypeScript
+export const artistModel = mongoose.model<Artist>('artist', artistSchema);
 ```
+Como no se ha explicado las pruebas unitarias para comprobar el funcionamiento de MongoDB y Mongoose, es decir, para comprobar el funcionamiento de servidores a través de aplicaciones especificas, no hemos podido implementar pruebas unitarias para este esquema.
+
 
 <br/><br/>
 
 ### 2.5. Esquema Cancion. <a name="id25"></a>
 
-```
-code
-```
+El esquema de una cancion situado en `src/schema/songSchema.ts` es similar al esquema anterior, lo unico que cambiamos es el tipo de atributos que recoge y el valor recogido en los mismos. estos serian un nombre que debe empezar por mayuscula y solo puede contener letras o numeros, luego un autor que sera una lista de strings con el nombre de los autores, una lista de generos que sera una lista de string cuyo valor debera estar contenido  en la opcion `enum`, un boleano que defina si fue single o no, un numero de reproducciones de la cancion y un numero de oyentes para posteriormente calcular los oyentes mensuales del artista.
+
+
+```TypeScript
+import * as mongoose from 'mongoose';
+import {Song} from '../models/song';
+
+export const songSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+    validate: (value: string) => {
+      if (!value.match(/^[A-Za-z0-9]*$/)) {
+        throw new Error('El nombre de la cancion tiene que empezar con una mayúscula y solo pueden estar formados por letras o numeros.');
+      }
+    },
+  },
+  author: {
+    type: [String],
+    unique: true,
+    required: true,
+    trim: true,
+  },
+  duration: {
+    type: Number,
+    required: true,
+    trim: true,
+  },
+  genres: {
+    type: [String],
+    required: true,
+    trim: true,
+    enum: ['CLASICA', 'ROCK', 'HIP-HOP', 'REGGEATON', 'POP', 'TRAP', 'PUNK', 'K-POP', 'METAL', 'CUMBIA', 'BLUES',
+      'JAZZ', 'COUNTRY', 'EDM', 'FLAMENCO', 'SALSA', 'REGGAE', 'GOSPEL', 'DISCO', 'BANDA SONORA', 'ALTERNATIVO', 'ELECTROPOP', 'SOUL', 'R&B', 'RAP', 'INDIE'],
+  },
+  single: {
+    type: Boolean,
+    required: true,
+    trim: true,
+  },
+  reproduction: {
+    type: Number,
+    required: true,
+    trim: true,
+  },
+  listener: {
+    type: Number,
+    required: true,
+    trim: true,
+  },
+});
 
 
 ```
-test
+ Y de la misma manera que se hizo en el esquema de artistas se termina por especificar este modelo a través del metodo `model` de Mongoose
+
+```TypeScript
+export const songModel = mongoose.model<Song>('song', songSchema);
 ```
+
+Las pruebas unitarias tampoco se han podido realizar para este modelo por el motivo comentado anteriormente
 
 <br/><br/>
 
 ### 2.6. Esquema Playlist. <a name="id26"></a>
 
-```
-code
+El esquema de una playlist situado en `src/schema/playlistSchema.ts` funciona exactamente igual que el de los restos, la unica diferencia son los valores implementados puesto que por ejemplo, el nombre de una playlist puede estar formado por letras o numeros, ademas de que playlist implementa una lista de esquemas de cancion. Y luego creamos y exportamos este modelo a través del método `model` de **Mongoose**.
+
+```TypeScript
+import * as mongoose from 'mongoose';
+import {songSchema} from '../schema/songSchema';
+import {Playlist} from '../models/playlist';
+
+export const playlistSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+    validate: (value: string) => {
+      if (!value.match(/^[A-Za-z0-9]*$/)) {
+        throw new Error('El nombre de la Playlist tiene que empezar con una mayúscula y solo pueden estar formados por letras o numeros.');
+      }
+    },
+  },
+  songs: {
+    type: [songSchema],
+    unique: true,
+    required: true,
+    trim: true,
+  },
+  duration: {
+    type: Number,
+    required: false,
+  },
+  genres: {
+    type: [String],
+    required: true,
+    trim: true,
+    enum: ['CLASICA', 'ROCK', 'HIP-HOP', 'REGGEATON', 'POP', 'TRAP', 'PUNK', 'K-POP', 'METAL', 'CUMBIA', 'BLUES',
+      'JAZZ', 'COUNTRY', 'EDM', 'FLAMENCO', 'SALSA', 'REGGAE', 'GOSPEL', 'DISCO', 'BANDA SONORA', 'ALTERNATIVO', 'ELECTROPOP', 'SOUL', 'R&B', 'RAP', 'INDIE'],
+  },
+});
+
+export const playlistModel = mongoose.model<Playlist>('playlist', playlistSchema);
+
 ```
 
-
-```
-test
-```
+Las pruebas unitarias tampoco se han podido realizar para este modelo por el motivo comentado anteriormente
 
 <br/><br/>
 
@@ -271,6 +667,8 @@ test
 
 Aqui van las intrucciones una vez desplegada la API
 
+https://isound-api-joel-mica.herokuapp.com/song
+
 ## 4. Dificultades. <a name="id4"></a>
 
 Dentro de las dificultades encontradas dentro de esta práctica, me gustaría resaltar:
@@ -287,7 +685,7 @@ A través de estas instrucciones se puede instalar y cambiar a la versión que s
 
 <br/>
 
-* otra dificultad.
+* otra dificultad fue al utilizar las clases ya que según lo comprendimos tras leer detenidamente el enunciado el diseño de las clases habia que abordarlo con otro punto de vista tal y como se comento con anterioridad ya que de esta forma se puede realizar un calculo sobre los oyentes y la duracion de la cancion.
 
 ## 5. Conclusión. <a name="id5"></a>
 
@@ -298,8 +696,8 @@ Los objetivos que se han propuesto y se han cumplido son:
 * 3. MongoDB y Mongoose para la creación de la Base de datos.
 * 4. Operaciones CRUD (CREATE-READ-UPDATE-DELETE) para manejar los datos introducidos a esta base de datos.
 * 5. Se ha utilizado ThunderClient para realizar las peticiones de las diversas operaciones.
-* 6. MongoDB Atlas
-* 7. Heroku para 
+* 6. MongoDB Atlas para establecer un Cluster y un servidor al que acceder al hacer peticiones.
+* 7. Heroku para desplegar la API y asociarle una dirección.
 
 mongodb+srv://iSounD:iSoundDSI@cluster0.yp5l1.mongodb.net/iSOunD
 
