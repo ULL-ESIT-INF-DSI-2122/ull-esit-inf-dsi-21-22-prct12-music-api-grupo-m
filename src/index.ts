@@ -15,9 +15,10 @@ import {defaultRouter} from './routers/defaultRouter';
 const app = express();
 app.use(express.json());
 app.use(songRouter);
-app.use(playlistRouter);
 app.use(artistRouter);
+app.use(playlistRouter);
 app.use(defaultRouter);
+
 
 /**
  * Se define el entorno y el puerto y se escuchan las peticiones

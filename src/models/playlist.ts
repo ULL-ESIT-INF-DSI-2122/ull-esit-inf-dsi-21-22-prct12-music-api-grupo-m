@@ -79,7 +79,7 @@ export class Playlist {
   }
 
   /**
-  * Metodo que devuelve los genres de las songs de la playlist.
+  * Metodo que devuelve los genres de las songList de la playlist.
   * @returns devuelve los genres de la playlist
   */
   getGenres(): genreInfo[] {
