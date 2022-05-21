@@ -22,6 +22,7 @@ import {Playlist} from '../models/playlist';
       }
     },
   },
+<<<<<<< HEAD
   genres: {
     type: [String],
     required: true,
@@ -30,6 +31,8 @@ import {Playlist} from '../models/playlist';
       'JAZZ', 'COUNTRY', 'EDM', 'FLAMENCO', 'SALSA', 'REGGAE', 'GOSPEL', 'DISCO', 'BANDA SONORA', 'ALTERNATIVO', 'ELECTROPOP', 'SOUL', 'R&B', 'RAP', 'INDIE'],
   },
 
+=======
+>>>>>>> ff34ddeee14b92306179c84b8c88d01414dc1108
   songList: {
     type: [songSchema],
     required: true,

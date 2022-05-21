@@ -22,7 +22,7 @@ export class Playlist {
   * Método encargado de obtener la lista de canciones de la playlist.
   * @returns devuelve el atributo asociado a la lista de canciones de la playlist
   */
-  getsongList(): Song[] {
+  getSongs(): Song[] {
     return this.songList;
   }
 
