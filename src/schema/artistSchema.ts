@@ -18,7 +18,7 @@ export const artistSchema = new mongoose.Schema({
     unique: true,
     trim: true,
     validate: (value: string) => {
-      if (!value.match(/^[A-ZñÑ][a-zA-ZñÑ ]\s*$/)) {
+      if (!value.match(/^[A-ZñÑ][a-zA-ZñÑ\s]*$/)) {
         throw new Error('El nombre de los artistas tiene que empezar con una mayúscula y solo pueden estar formados por letras.');
       }
     },
