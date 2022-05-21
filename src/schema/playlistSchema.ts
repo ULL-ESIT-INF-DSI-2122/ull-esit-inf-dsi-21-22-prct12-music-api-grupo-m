@@ -11,7 +11,7 @@ import {Playlist} from '../models/playlist';
  * Hay que resaltar que todos estos atributos son obligatorios al crear un objeto de tipo playlist, sin embergo hay un atributo que no es obligatorio
  * @param duration  es un atributo que se puede optar por especificar o no puesto que se calcula automaticamente al sumar la duracion de todas las canciones de la playlist.
  */
- export const playlistSchema = new mongoose.Schema({
+export const playlistSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -22,17 +22,6 @@ import {Playlist} from '../models/playlist';
       }
     },
   },
-<<<<<<< HEAD
-  genres: {
-    type: [String],
-    required: true,
-    trim: true,
-    enum: ['CLASICA', 'ROCK', 'HIP-HOP', 'REGGEATON', 'POP', 'TRAP', 'PUNK', 'K-POP', 'METAL', 'CUMBIA', 'BLUES',
-      'JAZZ', 'COUNTRY', 'EDM', 'FLAMENCO', 'SALSA', 'REGGAE', 'GOSPEL', 'DISCO', 'BANDA SONORA', 'ALTERNATIVO', 'ELECTROPOP', 'SOUL', 'R&B', 'RAP', 'INDIE'],
-  },
-
-=======
->>>>>>> ff34ddeee14b92306179c84b8c88d01414dc1108
   songList: {
     type: [songSchema],
     required: true,
