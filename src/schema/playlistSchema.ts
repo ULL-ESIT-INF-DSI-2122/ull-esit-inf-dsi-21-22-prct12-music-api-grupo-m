@@ -11,26 +11,16 @@ import {Playlist} from '../models/playlist';
  * Hay que resaltar que todos estos atributos son obligatorios al crear un objeto de tipo playlist, sin embergo hay un atributo que no es obligatorio
  * @param duration  es un atributo que se puede optar por especificar o no puesto que se calcula automaticamente al sumar la duracion de todas las canciones de la playlist.
  */
-export const playlistSchema = new mongoose.Schema({
+ export const playlistSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
     trim: true,
     validate: (value: string) => {
-      if (!value.match(/^[A-Za-z0-9\s]*$/)) {
-        throw new Error('El nombre de la Playlist tiene que empezar con una mayúscula y solo pueden estar formados por letras o numeros.');
+      if (!value.match(/^[A-ZñÑ][a-zA-ZñÑ\s]*$/)) {
+        throw new Error('El nombre de los artistas tiene que empezar con una mayúscula y solo pueden estar formados por letras.');
       }
     },
-  },
-  songs: {
-    type: [songSchema],
-    unique: true,
-    required: true,
-    trim: true,
-  },
-  duration: {
-    type: Number,
-    required: false,
   },
   genres: {
     type: [String],
@@ -39,8 +29,19 @@ export const playlistSchema = new mongoose.Schema({
     enum: ['CLASICA', 'ROCK', 'HIP-HOP', 'REGGEATON', 'POP', 'TRAP', 'PUNK', 'K-POP', 'METAL', 'CUMBIA', 'BLUES',
       'JAZZ', 'COUNTRY', 'EDM', 'FLAMENCO', 'SALSA', 'REGGAE', 'GOSPEL', 'DISCO', 'BANDA SONORA', 'ALTERNATIVO', 'ELECTROPOP', 'SOUL', 'R&B', 'RAP', 'INDIE'],
   },
-});
 
+  songList: {
+    type: [songSchema],
+    required: true,
+    trim: true,
+  },
+
+  duration: {
+    type: Number,
+    required: false,
+    trim: true,
+  },
+});
 /**
  * Se crea y se exporta un modelo playlist que posteriormente se operará con este, todo a través del metodo model de Mongoose.
  * @method mongoose.model<T>() metodo que permite crear un modelo basado en una clase y que almacena el esquema.

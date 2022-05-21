@@ -26,7 +26,6 @@ export const songSchema = new mongoose.Schema({
   },
   author: {
     type: [String],
-    unique: true,
     required: true,
     trim: true,
   },

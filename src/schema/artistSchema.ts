@@ -15,7 +15,6 @@ export const artistSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true,
     trim: true,
     validate: (value: string) => {
       if (!value.match(/^[A-ZñÑ][a-zA-ZñÑ\s]*$/)) {

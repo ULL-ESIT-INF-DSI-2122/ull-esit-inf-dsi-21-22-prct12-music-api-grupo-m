@@ -7,12 +7,12 @@ export class Playlist {
   /**
    * Constructor de la clase Playlist que define el funcionamiento de una lista de reproduccion.
    * @param name Nombre de la playlist.
-   * @param songs Lisya de canciones que componen la playlist.
+   * @param songList Lisya de canciones que componen la playlist.
    * @param duration duracion total de la playlist en horas y minutos.
    * @param genres genres musicales que se incluyen dentro de la playlist.
    */
-  constructor(private name: string, private songs: Song[], private duration: number, private genres: genreInfo[]) {
-    this.songs = songs;
+  constructor(private name: string, private songList: Song[], private duration: number, private genres: genreInfo[]) {
+    this.songList = songList;
     this.duration = duration;
     this.genres = genres;
     this.name = name;
@@ -22,8 +22,8 @@ export class Playlist {
   * Método encargado de obtener la lista de canciones de la playlist.
   * @returns devuelve el atributo asociado a la lista de canciones de la playlist
   */
-  getSongs(): Song[] {
-    return this.songs;
+  getsongList(): Song[] {
+    return this.songList;
   }
 
   /**
@@ -31,7 +31,7 @@ export class Playlist {
   * @returns devuelve el nombre de una cancion de todas las que recoge la lista
   */
   getNameSong(): string {
-    this.songs.forEach((item) => {
+    this.songList.forEach((item) => {
       return item.getName();
     });
     return "No existe ningun nombre";
@@ -42,7 +42,7 @@ export class Playlist {
   * @returns devuelve el autor de la lista de canciones
   */
   getArtistSong(): string {
-    this.songs.forEach((item) => {
+    this.songList.forEach((item) => {
       return item.getAutor();
     });
     return "No existe ningun Artista o Grupo asociado";
@@ -53,7 +53,7 @@ export class Playlist {
   * @returns devuelve la duracion de las canciones de la Playlist
   */
   getDurationSong(): number {
-    this.songs.forEach((item) => {
+    this.songList.forEach((item) => {
       return item.getDuration();
     });
     return -1;
@@ -64,7 +64,7 @@ export class Playlist {
   * @returns obtiene el genero de las canciones de la playlist
   */
   getGenrePlaylist(): string {
-    this.songs.forEach((item) => {
+    this.songList.forEach((item) => {
       return item.getGenres();
     });
     return "No existe Genero";
@@ -79,7 +79,7 @@ export class Playlist {
   }
 
   /**
-  * Metodo que devuelve los genres de las songs de la playlist.
+  * Metodo que devuelve los genres de las songList de la playlist.
   * @returns devuelve los genres de la playlist
   */
   getGenres(): genreInfo[] {
@@ -99,6 +99,6 @@ export class Playlist {
   * @param newItem nuevo conjunto de canciones que perteneceran a una playlist.
   */
   setPlaylistSong(newItem: Song[]): void {
-    this.songs = newItem;
+    this.songList = newItem;
   }
 }
