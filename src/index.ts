@@ -14,9 +14,9 @@ import {defaultRouter} from './routers/defaultRouter';
  */
 const app = express();
 app.use(express.json());
-app.use(artistRouter);
 app.use(songRouter);
 app.use(playlistRouter);
+app.use(artistRouter);
 app.use(defaultRouter);
 
 /**

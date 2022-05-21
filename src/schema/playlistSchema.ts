@@ -22,7 +22,7 @@ export const playlistSchema = new mongoose.Schema({
       }
     },
   },
-  songs: {
+  songList: {
     type: [songSchema],
     unique: true,
     required: true,
