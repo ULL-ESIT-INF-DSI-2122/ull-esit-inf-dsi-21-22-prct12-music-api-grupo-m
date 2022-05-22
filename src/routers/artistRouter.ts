@@ -34,7 +34,7 @@ artistRouter.get('/artist', async (req, res) => {
 });
 
 /**
- * Por otro lado se puede realizar una búsqueda en la base de datos a través del ID
+ * Por otro lado se puede realizar una búsqueda en la base de datos a través del ID especificado.
  * especificamente  ahora funciona como `localhost:3000/artist/ID` de esta forma se busca automanticamente en la coleccion el parametro con ese id y se devuelve.
  * @method findById busca en una coleccion a través del ID del mismo.
  */
