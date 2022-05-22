@@ -5,7 +5,7 @@ import {Song} from '../models/song';
  * Define como es el esquema de un objeto Canción (songSchema) que se guardará en el sistema a través de **Mongoose**.
  * @method mongoose.Schema() es un método que crea un esquema con un array de objetos que se guardarán en ese esquema.
  * @param name nombre de la canción a travéss de validadores se comprueba que empieze por mayuscula y solo contenga letras.
- * @param author autor o autores de una cancion.
+ * @param author autor o autores de una cancion que hay en el sistema.
  * @param duration duracion en minutos de la cancion.
  * @param genres generos de la cancion que deben estar recogidos entre algunos de los generos definidos.
  * @param single flag que comprueba si la cancion fue un single o no.
