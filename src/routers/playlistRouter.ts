@@ -82,7 +82,7 @@ playlistRouter.patch('/playlist', async (req, res) => {
     });
   }
 
-  const allowedUpdates = ['name', 'songs', 'duration', 'genres'];
+  const allowedUpdates = ['name', 'songList', 'duration', 'genres'];
   const actualUpdates = Object.keys(req.body);
   const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
 
@@ -116,9 +116,10 @@ playlistRouter.patch('/playlist', async (req, res) => {
  */
 
 playlistRouter.patch('/playlist/:id', async (req, res) => {
-  const allowedUpdates = ['name', 'songs', 'duration', 'genres'];
+  const allowedUpdates = ['name', 'songList', 'duration', 'genres'];
   const actualUpdates = Object.keys(req.body);
   const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
+
 
   if (!isValidUpdate) {
     return res.status(400).send({
