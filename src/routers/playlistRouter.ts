@@ -58,13 +58,6 @@ playlistRouter.get('/playlist/:id', async (req, res) => {
  * @method save permite guardar un elemento en la colección de playlist.
  */
 playlistRouter.post('/playlist', async (req, res) => {
-  const canciones = req.body.songList;
-  let sumaDuration: number = 0;
-  for (let i in canciones) {
-    sumaDuration += canciones[i].duration;
-  }
-  req.body.duration = sumaDuration;
-
   const playlist = new playlistModel(req.body);
   try {
     await playlist.save();
