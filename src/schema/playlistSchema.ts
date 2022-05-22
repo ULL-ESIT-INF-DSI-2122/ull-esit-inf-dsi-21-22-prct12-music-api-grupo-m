@@ -11,7 +11,7 @@ import {Playlist} from '../models/playlist';
  * Hay que resaltar que todos estos atributos son obligatorios al crear un objeto de tipo playlist, sin embergo hay un atributo que no es obligatorio
  * @param duration  es un atributo que se puede optar por especificar o no puesto que se calcula automaticamente al sumar la duracion de todas las canciones de la playlist.
  */
- export const playlistSchema = new mongoose.Schema({
+export const playlistSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
