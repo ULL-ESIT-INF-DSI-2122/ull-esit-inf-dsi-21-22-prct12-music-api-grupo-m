@@ -1,4 +1,5 @@
-import * as mongoose from 'mongoose';
+import {Document, model} from 'mongoose';
+import {Schema} from 'mongoose';
 import {songSchema} from '../schema/songSchema';
 import {Playlist} from '../models/playlist';
 
@@ -11,7 +12,7 @@ import {Playlist} from '../models/playlist';
  * Hay que resaltar que todos estos atributos son obligatorios al crear un objeto de tipo playlist, sin embergo hay un atributo que no es obligatorio
  * @param duration  es un atributo que se puede optar por especificar o no puesto que se calcula automaticamente al sumar la duracion de todas las canciones de la playlist.
  */
-export const playlistSchema = new mongoose.Schema({
+export const playlistSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -23,9 +24,10 @@ export const playlistSchema = new mongoose.Schema({
     },
   },
   songList: {
-    type: [songSchema],
+    type: [Schema.Types.ObjectId],
     required: true,
     trim: true,
+    ref: 'song',
   },
 
   duration: {
@@ -38,4 +40,4 @@ export const playlistSchema = new mongoose.Schema({
  * Se crea y se exporta un modelo playlist que posteriormente se operará con este, todo a través del metodo model de Mongoose.
  * @method mongoose.model<T>() metodo que permite crear un modelo basado en una clase y que almacena el esquema.
  */
-export const playlistModel = mongoose.model<Playlist>('playlist', playlistSchema);
+export const playlistModel = model<Playlist>('playlist', playlistSchema);
