@@ -1,6 +1,5 @@
-import {Document, model} from 'mongoose';
+import {model} from 'mongoose';
 import {Schema} from 'mongoose';
-import {songSchema} from '../schema/songSchema';
 import {Playlist} from '../models/playlist';
 
 /**

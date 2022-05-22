@@ -11,6 +11,7 @@ Se pretente implementar una API REST sobre un sistema que permite almacenar y ma
 
 Para la ejecución del código se recomienda la utilización de la herramienta de ThunderClient que permite mandar diversas peticiones a nuestra base de datos desplegada con Heroku y MongoDB Atlas. Aunque para mayor comodidad se exportará un fichero con una serie de operaciones básicas la cual se puede importar dentro de ThunderClient para su comprobación.
 
+> Las pruebas creadas a través de `Thunder Client` se encuentran en la carpeta `../ThunderCLientTest` especificamente el fichero exportado es: `Pruebas API-Musical.json`, para la ejecución es recomendable importar en thunder client estas pruebas y ejecuarlas en orden, esto es primero las pruebas de cancion, luego las pruebas de artistas y luego las de playlist. esto es debido a que la clase base que debe estar implementada es cancion.
 
 > Para acceder al informe de la práctica 12 piche [aquí](https://github.com/ULL-ESIT-INF-DSI-2122/ull-esit-inf-dsi-21-22-prct12-music-api-grupo-m/blob/main/docs/index.md)
 

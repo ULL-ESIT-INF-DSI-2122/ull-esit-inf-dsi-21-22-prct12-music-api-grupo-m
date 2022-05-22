@@ -551,42 +551,36 @@ Las pruebas unitarias tampoco se han podido realizar para este modelo por el mot
 El esquema de una playlist situado en `src/schema/playlistSchema.ts` funciona exactamente igual que el de los restos, la unica diferencia son los valores implementados puesto que por ejemplo, el nombre de una playlist puede estar formado por letras o numeros, ademas de que playlist implementa una lista de esquemas de cancion. Y luego creamos y exportamos este modelo a través del método `model` de **Mongoose**.
 
 ```TypeScript
-import * as mongoose from 'mongoose';
-import {songSchema} from '../schema/songSchema';
+import {model} from 'mongoose';
+import {Schema} from 'mongoose';
 import {Playlist} from '../models/playlist';
 
-export const playlistSchema = new mongoose.Schema({
+export const playlistSchema = new Schema({
   name: {
     type: String,
     required: true,
     trim: true,
     validate: (value: string) => {
-      if (!value.match(/^[A-Za-z0-9]*$/)) {
-        throw new Error('El nombre de la Playlist tiene que empezar con una mayúscula y solo pueden estar formados por letras o numeros.');
+      if (!value.match(/^[A-ZñÑ][a-zA-ZñÑ\s]*$/)) {
+        throw new Error('El nombre de los artistas tiene que empezar con una mayúscula y solo pueden estar formados por letras.');
       }
     },
   },
-  songs: {
-    type: [songSchema],
-    unique: true,
+  songList: {
+    type: [Schema.Types.ObjectId],
     required: true,
     trim: true,
+    ref: 'song',
   },
+
   duration: {
     type: Number,
     required: false,
-  },
-  genres: {
-    type: [String],
-    required: true,
     trim: true,
-    enum: ['CLASICA', 'ROCK', 'HIP-HOP', 'REGGEATON', 'POP', 'TRAP', 'PUNK', 'K-POP', 'METAL', 'CUMBIA', 'BLUES',
-      'JAZZ', 'COUNTRY', 'EDM', 'FLAMENCO', 'SALSA', 'REGGAE', 'GOSPEL', 'DISCO', 'BANDA SONORA', 'ALTERNATIVO', 'ELECTROPOP', 'SOUL', 'R&B', 'RAP', 'INDIE'],
   },
 });
 
-export const playlistModel = mongoose.model<Playlist>('playlist', playlistSchema);
-
+export const playlistModel = model<Playlist>('playlist', playlistSchema);
 ```
 
 Las pruebas unitarias tampoco se han podido realizar para este modelo por el motivo comentado anteriormente
@@ -1025,6 +1019,21 @@ A través de estas instrucciones se puede instalar y cambiar a la versión que s
 <br/>
 
 * otra dificultad fue al utilizar las clases ya que según lo comprendimos tras leer detenidamente el enunciado el diseño de las clases habia que abordarlo con otro punto de vista tal y como se comento con anterioridad ya que de esta forma se puede realizar un calculo sobre los oyentes y la duracion de la cancion.
+
+
+* Una dificultad a resaltar ha sido el uso de collecciones previamente creadas en la base de datos, para solucionar este error hemos tenido que ir a los esquemas que implementaban en alguno de sus atributos otros esquemas, para cambiarlo por el id referenciado de ese objeto de esta forma se comprueba que previamente esté creado y simplemente se hace uso de ese objeto especificamente los cambios realizados en `playlistSchema` ha sido:
+
+```TypeScript
+import {Schema} from 'mongoose';
+  songList: {
+    type: [Schema.Types.ObjectId],
+    required: true,
+    trim: true,
+    ref: 'song',
+  },
+
+```
+Como se puede ver se ha exportado la funcion schema de mongoose,  y se hace uso del tipado de ObjectId que permite filtrar y como referencia buscamos las canciones de la base de esta forma se soluciona el error.
 
 ## 5. Conclusión. <a name="id5"></a>
 
