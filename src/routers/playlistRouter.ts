@@ -1,6 +1,5 @@
 import * as express from 'express';
 import {playlistModel} from '../schema/playlistSchema';
-
 /**
  * Definimos un nuevo punto de acceso para los objetos de tipo playlist (/playlist).
  * @method express.Router() método que permite definir un nuevo router, en este caso para operar con Playlists.
